@@ -1,4 +1,3 @@
-# Training--Overfitting
 # Overfitting and Training Models Analysis
 
 ## Overview
@@ -24,26 +23,60 @@ Ensure you have R installed and required packages:
 ```r
 install.packages("ggplot2")
 install.packages("rpart")
+install.packages("rpart.plot")
 ```
 
 ## Usage
 ### Simulating Training Data
 ```r
-set.seed(1)
-x1 <- runif(100, min = 0, max = 20)
-x2 <- runif(100, min = 0, max = 20)
-labels <- sample(c("+", "o"), 100, replace = TRUE)
-plot(x1, x2, col=ifelse(labels == "+", "red", "blue"), pch=19,
-     main="Replica Training Set", xlab="x1", ylab="x2")
+# Load necessary libraries
+library(ggplot2)
+
+# Generate a uniform distribution for x1 and x2
+x1 <- runif(n = 1000, min = 0, max = 20)
+x2 <- runif(n = 1000, min = 0, max = 20)
+
+# Add the values of x1 and x2 to the data frame
+Replica_group_1_x <- rnorm(510, 5, 2)
+Replica_group_1_y <- rnorm(510, 14, 3)
+
+Replica_group_2_x <- rnorm(510, 10, 2)
+Replica_group_2_y <- rnorm(510, 6, 4)
+
+Replica_group_3_x <- rnorm(510, 16, 2)
+Replica_group_3_y <- rnorm(510, 14, 4)
+
+# Create scatter plot
+plot(x1, x2, lwd = 2, xlab = 'x1', ylab = 'x2', pch = 3,
+     main = 'Replica Training Set', xlim = c(10,20), ylim = c(10,20))
+
+# Add points for the replica groups
+points(Replica_group_1_x, Replica_group_1_y, lwd = 3)
+points(Replica_group_2_x, Replica_group_2_y, lwd = 3)
+points(Replica_group_3_x, Replica_group_3_y, lwd = 3)
 ```
 
 ### Creating Decision Trees
 ```r
+# Load required libraries
 library(rpart)
-data <- data.frame(x1, x2, labels)
-tree <- rpart(labels ~ x1 + x2, data = data, method = "class")
-plot(tree)
-text(tree, use.n = TRUE)
+library(rpart.plot)
+
+# Convert labels to factor (required for classification)
+data$labels <- as.factor(data$labels)
+
+# Build a simple decision tree model
+simple_tree <- rpart(labels ~ x1 + x2, data = data, method = "class", control = rpart.control(cp = 0.05))
+
+# Build a complex decision tree model
+complex_tree <- rpart(labels ~ x1 + x2, data = data, method = "class", control = rpart.control(cp = 0.001))
+
+# Plot the simple tree
+par(mfrow=c(1,2))  # Set up a 1x2 plot layout
+rpart.plot(simple_tree, main = "Simple Decision Tree")
+
+# Plot the complex tree
+rpart.plot(complex_tree, main = "Complex Decision Tree")
 ```
 
 ## Results
@@ -59,14 +92,11 @@ text(tree, use.n = TRUE)
 ## Visualization
 ### Training Data Classification
 ![Training Data Scatter Plot](images/training_data_scatter.png)
-
-### Decision Tree Models
-![Simple Decision Tree](images/simple_decision_tree.png)
-![Complex Decision Tree](images/complex_decision_tree.png)
-
 ## References
 - Borshchev, A. (2013). *The Big Book of Simulation Modeling*. AnyLogic.
 - Favero, L. P., & Belfiore, P. (2019). *Data Science for Business and Decision Making*. Elsevier S & T.
 
 ## License
 This project is open-source and can be freely used and modified.
+user-attachments/assets/60e91fad-1da5-4c53-a0ed-794080412298)
+
